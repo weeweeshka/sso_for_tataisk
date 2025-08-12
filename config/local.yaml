@@ -1,0 +1,5 @@
+storage_path:
+token_ttl: 1h
+grpc:
+  port: 5001
+  timeout: 5s
