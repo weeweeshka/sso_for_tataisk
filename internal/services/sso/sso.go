@@ -10,8 +10,6 @@ import (
 	"time"
 )
 
-//todo REPO Interface + service layer
-
 type Sso struct {
 	logr     *zap.Logger
 	repo     SsoRepo
@@ -56,9 +54,9 @@ func (s *Sso) Register(ctx context.Context, email string, password string) (int6
 	return userID, nil
 }
 
-func (s *Sso) RegApp(ctx context.Context, email string, secret string) (int32, error) {
+func (s *Sso) Regapp(ctx context.Context, name string, secret string) (int32, error) {
 
-	appID, err := s.repo.SaveAppDB(ctx, email, secret)
+	appID, err := s.repo.SaveAppDB(ctx, name, secret)
 	if err != nil {
 		return 0, fmt.Errorf("s.repo.SaveAppDB: %w", err)
 	}

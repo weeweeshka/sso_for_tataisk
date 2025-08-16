@@ -22,7 +22,7 @@ type Sso interface {
 		appID int32,
 	) (string, error)
 
-	RegApp(
+	Regapp(
 		ctx context.Context,
 		name string,
 		secret string,
@@ -79,7 +79,7 @@ func (s *serverApi) Login(ctx context.Context, req *pb.LoginRequest) (*pb.LoginR
 	return &pb.LoginResponse{Token: token}, nil
 }
 
-func (s *serverApi) RegApp(ctx context.Context, req *pb.RegappRequest) (*pb.RegappResponse, error) {
+func (s *serverApi) Regapp(ctx context.Context, req *pb.RegappRequest) (*pb.RegappResponse, error) {
 
 	if req.GetName() == "" {
 		return nil, status.Error(codes.InvalidArgument, "Name is required")
@@ -89,7 +89,7 @@ func (s *serverApi) RegApp(ctx context.Context, req *pb.RegappRequest) (*pb.Rega
 		return nil, status.Error(codes.InvalidArgument, "Secret is required")
 	}
 
-	appID, err := s.api.RegApp(ctx, req.GetName(), req.GetSecret())
+	appID, err := s.api.Regapp(ctx, req.GetName(), req.GetSecret())
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

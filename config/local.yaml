@@ -1,4 +1,4 @@
-storage_path:
+storage_path: "postgres://postgres:12345@localhost:5432/sso?sslmode=disable"
 token_ttl: 1h
 grpc:
   port: 5001

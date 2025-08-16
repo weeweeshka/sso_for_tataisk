@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/weeweeshka/sso_for_tataisk/internal/domain/models"
 	"go.uber.org/zap"
@@ -58,6 +60,7 @@ func NewStorage(connString string, logr *zap.Logger) (*Storage, error) {
 	if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return nil, fmt.Errorf("failed to run migrations: %w", err)
 	}
+	logr.Info("migrated successfully")
 
 	return &Storage{db: dbPool}, nil
 }

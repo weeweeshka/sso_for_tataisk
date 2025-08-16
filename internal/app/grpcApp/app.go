@@ -24,7 +24,7 @@ func New(port int, logr *zap.Logger, sso grpcHandlers.Sso) *GRPCServer {
 
 func (s *GRPCServer) Run() error {
 
-	l, err := net.Listen("tcp", ":"+string(s.port))
+	l, err := net.Listen("tcp", fmt.Sprintf(":%d", s.port))
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
 	}

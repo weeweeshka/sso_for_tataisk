@@ -18,7 +18,8 @@ type GRPCConfig struct {
 }
 
 func MustLoad() *Config {
-	configPath := "config/local.yaml"
+	configPath := "../../config/local.yaml"
+
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		panic("config file not found: " + configPath)
 	}
