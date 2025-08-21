@@ -10,7 +10,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/weeweeshka/sso_for_tataisk/internal/domain/models"
 	"go.uber.org/zap"
-	"path/filepath"
+	"os"
 	"time"
 )
 
@@ -45,14 +45,20 @@ func NewStorage(connString string, logr *zap.Logger) (*Storage, error) {
 	}
 	logr.Info("connected to database", zap.String("path to db", connString))
 
-	absPath, err := filepath.Abs("../../migrations")
-	if err != nil {
-		return nil, fmt.Errorf("failed to determine migration URL: %w", err)
+	migrationPath := os.Getenv("MIGRATIONS_PATH")
+	if migrationPath == "" {
+		migrationPath = "./migrations"
+	}
+	var m *migrate.Migrate
+
+	for i := 0; i < 10; i++ {
+		m, err = migrate.New(migrationPath, connString)
+		if err == nil {
+			break
+		}
+		time.Sleep(2 * time.Second)
 	}
 
-	migrationUrl := "file://" + filepath.ToSlash(absPath)
-
-	m, err := migrate.New(migrationUrl, connString)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create migration instance: %w", err)
 	}
@@ -60,7 +66,8 @@ func NewStorage(connString string, logr *zap.Logger) (*Storage, error) {
 	if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		return nil, fmt.Errorf("failed to run migrations: %w", err)
 	}
-	logr.Info("migrated successfully")
+
+	logr.Info("migrated successfully", zap.String("path", migrationPath))
 
 	return &Storage{db: dbPool}, nil
 }
