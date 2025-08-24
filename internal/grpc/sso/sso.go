@@ -13,6 +13,7 @@ type Sso interface {
 		ctx context.Context,
 		email string,
 		password string,
+		role string,
 	) (int64, error)
 
 	Login(
@@ -48,7 +49,7 @@ func (s *serverApi) Register(ctx context.Context, req *pb.RegisterRequest) (*pb.
 		return nil, status.Error(codes.InvalidArgument, "Password is required")
 	}
 
-	userID, err := s.api.Register(ctx, req.GetEmail(), req.GetPassword())
+	userID, err := s.api.Register(ctx, req.GetEmail(), req.GetPassword(), req.GetRole())
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}

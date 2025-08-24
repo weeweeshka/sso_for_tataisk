@@ -25,7 +25,7 @@ type SsoRepo interface {
 		ctx context.Context,
 		appID int32) (models.App, error)
 
-	SaveUserDB(ctx context.Context, email string, passHash []byte) (int64, error)
+	SaveUserDB(ctx context.Context, email string, passHash []byte, role string) (int64, error)
 
 	SaveAppDB(ctx context.Context, name string, secret string) (int32, error)
 }
@@ -39,16 +39,16 @@ func NewSsoService(logr *zap.Logger, repo SsoRepo, tokenTTl time.Duration) *Sso 
 	}
 }
 
-func (s *Sso) Register(ctx context.Context, email string, password string) (int64, error) {
+func (s *Sso) Register(ctx context.Context, email, password string, role string) (int64, error) {
 
 	passHash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return 0, fmt.Errorf("bcrypt.GenerateFromPassword: %w", err)
+		return 0, fmt.Errorf("failed to hash password: %w", err)
 	}
 
-	userID, err := s.repo.SaveUserDB(ctx, email, passHash)
+	userID, err := s.repo.SaveUserDB(ctx, email, passHash, role)
 	if err != nil {
-		return 0, fmt.Errorf("s.repo.SaveUserDB: %w", err)
+		return 0, fmt.Errorf("failed to save user: %w", err)
 	}
 
 	return userID, nil

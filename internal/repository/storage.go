@@ -72,10 +72,10 @@ func NewStorage(connString string, logr *zap.Logger) (*Storage, error) {
 	return &Storage{db: dbPool}, nil
 }
 
-func (s *Storage) SaveUserDB(ctx context.Context, email string, passHash []byte) (int64, error) {
+func (s *Storage) SaveUserDB(ctx context.Context, email string, passHash []byte, role string) (int64, error) {
 
 	var userID int64
-	err := s.db.QueryRow(ctx, `INSERT INTO users(email, password) VALUES($1, $2) RETURNING id`, email, passHash).Scan(&userID)
+	err := s.db.QueryRow(ctx, `INSERT INTO users(email, password, role) VALUES($1, $2, $3) RETURNING id`, email, passHash, role).Scan(&userID)
 	if err != nil {
 		return 0, fmt.Errorf("failed to insert user: %w", err)
 	}
@@ -97,7 +97,7 @@ func (s *Storage) UserDB(ctx context.Context, email string) (models.User, error)
 
 	var user models.User
 
-	err := s.db.QueryRow(ctx, `SELECT id, email, password FROM users WHERE email = $1`, email).Scan(&user.ID, &user.Email, &user.PassHash)
+	err := s.db.QueryRow(ctx, `SELECT id, email, password, role FROM users WHERE email = $1`, email).Scan(&user.ID, &user.Email, &user.PassHash, &user.Role)
 	if err != nil {
 		return models.User{}, fmt.Errorf("failed to query user: %w", err)
 	}

@@ -12,6 +12,7 @@ func JwtToken(user models.User, app models.App, duration time.Duration) (string,
 	claims := token.Claims.(jwt.MapClaims)
 	claims["uid"] = user.ID
 	claims["email"] = user.Email
+	claims["role"] = user.Role
 	claims["exp"] = time.Now().Add(duration).Unix()
 	claims["app_id"] = app.ID
 
