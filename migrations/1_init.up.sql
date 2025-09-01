@@ -24,3 +24,15 @@ CREATE TABLE IF NOT EXISTS tataisk (
     budget INTEGER NOT NULL,
     collection INTEGER NOT NULL
     );
+
+CREATE TABLE IF NOT EXISTS comments (
+    id SERIAL PRIMARY KEY,
+    film_id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+
+    CONSTRAINT fk_comments_tataisk
+    FOREIGN KEY (film_id)
+    REFERENCES tataisk(id)
+    ON DELETE CASCADE
+);
